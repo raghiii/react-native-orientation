@@ -3,11 +3,16 @@ package com.github.yamill.orientation;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.util.Log;
+import android.net.Uri;
+import android.provider.Settings;
+import android.database.ContentObserver;
+import android.os.Handler;
 
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
@@ -68,6 +73,15 @@ public class OrientationModule extends ReactContextBaseJavaModule implements Lif
         } else {
             callback.invoke(null, orientation);
         }
+    }
+
+    @ReactMethod
+    public void getAutoRotateState(Callback callback) {
+      final ContentResolver resolver = getReactApplicationContext().getContentResolver();
+      boolean rotateLock = android.provider.Settings.System.getInt(
+      resolver,
+      android.provider.Settings.System.ACCELEROMETER_ROTATION, 0) == 1;
+      callback.invoke(rotateLock);
     }
 
     @ReactMethod
